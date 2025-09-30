@@ -4,184 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Revenue Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Inter', sans-serif;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .form-input {
+            transition: all 0.3s ease-in-out;
         }
-        h1 {
-            text-align: center;
-            color: #4CAF50;
+        .result-card {
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-style: preserve-3d;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .result-card.flip {
+            transform: rotateY(180deg);
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        .result-front, .result-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
-        input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .predicted-amount {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .profit {
-            color: #2e7d32; /* Green for profit */
-        }
-        .loss {
-            color: #d32f2f; /* Red for loss */
+        .result-back {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
 
-<div class="container">
-    <h1>Movie Revenue Predictor</h1>
-    <form id="predictionForm">
-        <div class="form-group">
-            <label for="year">Year:</label>
-            <select id="year" name="year" required></select>
-        </div>
-        <div class="form-group">
-            <label for="genre">Genre:</label>
-            <select id="genre" name="genre" required></select>
-        </div>
-        <div class="form-group">
-            <label for="rating">Rating (e.g., 9.3):</label>
-            <input type="number" id="rating" name="rating" step="0.1" required>
-        </div>
-        <div class="form-group">
-            <label for="run_time">Run Time (in minutes):</label>
-            <input type="number" id="run_time" name="run_time" required>
-        </div>
-        <div class="form-group">
-            <label for="budget">Budget (in USD):</label>
-            <input type="number" id="budget" name="budget" required>
-        </div>
-        <button type="submit">Predict Revenue</button>
-    </form>
-    
-    <div id="result">
-        <h3>Prediction Result:</h3>
-        <p id="predictionText">Fill out the form and click "Predict".</p>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentYear = new Date().getFullYear();
-        const yearSelect = document.getElementById('year');
+    <div class="w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 space-y-8">
         
-        // Populate the Year dropdown
-        for (let year = currentYear; year >= 1920; year--) {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            yearSelect.appendChild(option);
-        }
+        <!-- Header -->
+        <div>
+            <h1 class="text-4xl font-bold text-center text-cyan-400">Movie Revenue Predictor</h1>
+            <p class="text-center text-gray-400 mt-2">Will your next movie be a blockbuster hit or a box office bomb? Enter the details below to find out!</p>
+        </div>
 
-        // Populate the Genre dropdown
-        const genres = [
-            'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 
-            'Crime', 'Drama', 'Family', 'Fantasy', 'Film-Noir', 'History',
-            'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi',
-            'Sport', 'Thriller', 'War', 'Western'
-        ];
-        const genreSelect = document.getElementById('genre');
-        genres.forEach(genre => {
-            const option = document.createElement('option');
-            option.value = genre;
-            option.textContent = genre;
-            genreSelect.appendChild(option);
-        });
-    });
+        <!-- Input Form -->
+        <form id="prediction-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="year" class="block text-sm font-medium text-gray-300 mb-2">Release Year</label>
+                <input type="number" id="year" name="year" placeholder="e.g., 2023" required class="form-input w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+            </div>
+            <div class="form-group">
+                <label for="rating" class="block text-sm font-medium text-gray-300 mb-2">Rating (1-10)</label>
+                <input type="number" step="0.1" id="rating" name="rating" placeholder="e.g., 8.5" required class="form-input w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+            </div>
+            <div class="form-group">
+                <label for="run_time" class="block text-sm font-medium text-gray-300 mb-2">Runtime (minutes)</label>
+                <input type="number" id="run_time" name="run_time" placeholder="e.g., 150" required class="form-input w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+            </div>
+             <div class="form-group">
+                <label for="budget" class="block text-sm font-medium text-gray-300 mb-2">Budget ($)</label>
+                <input type="number" id="budget" name="budget" placeholder="e.g., 150000000" required class="form-input w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+            </div>
+            <div class="form-group md:col-span-2">
+                <label for="genre" class="block text-sm font-medium text-gray-300 mb-2">Genre(s)</label>
+                <input type="text" id="genre" name="genre" placeholder="e.g., Action,Adventure,Sci-Fi" required class="form-input w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+            </div>
 
-    document.getElementById('predictionForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+            <div class="md:col-span-2 text-center">
+                 <button type="submit" id="predict-btn" class="w-full md:w-1/2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                    <span id="btn-text">Predict Revenue</span>
+                    <span id="loading-spinner" class="hidden">
+                        <svg class="animate-spin h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Predicting...
+                    </span>
+                 </button>
+            </div>
+        </form>
 
-        const data = {
-            year: parseInt(document.getElementById('year').value),
-            rating: parseFloat(document.getElementById('rating').value),
-            genre: document.getElementById('genre').value,
-            run_time: parseInt(document.getElementById('run_time').value),
-            budget: parseInt(document.getElementById('budget').value)
-        };
+        <!-- Result Display -->
+        <div id="result-container" class="pt-6 text-center hidden">
+             <div class="result-card w-full max-w-md mx-auto h-56 relative">
+                 <!-- Front of the Card -->
+                <div class="result-front absolute w-full h-full bg-gray-700 rounded-xl p-6 flex flex-col items-center justify-center shadow-md border border-gray-600">
+                    <p class="text-gray-400 text-lg">Prediction will appear here...</p>
+                </div>
+                <!-- Back of the Card -->
+                <div id="result" class="result-back absolute w-full h-full rounded-xl p-6 flex flex-col items-center justify-center shadow-xl">
+                    <!-- Content will be injected by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
 
-        fetch('http://127.0.0.1:5000/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(data => {
-            const resultTextElement = document.getElementById('predictionText');
-            if (data.error) {
-                resultTextElement.textContent = `Error: ${data.error}`;
-                resultTextElement.style.color = 'red';
-            } else if (data.predicted_revenue) {
-                const predictedAmount = parseFloat(data.predicted_revenue.replace(/,/g, '')).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                const profitLossAmount = parseFloat(data.profit_loss.replace(/,/g, '')).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                const status = data.status;
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-                resultTextElement.innerHTML = `
-                    Predicted Box Office Revenue:<br>
-                    <span class="predicted-amount">${predictedAmount}</span>
-                    <br><br>
-                    Estimated Result: <span class="predicted-amount ${status.toLowerCase()}">${status} of ${profitLossAmount}</span>
+            const predictBtn = document.getElementById('predict-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const resultContainer = document.getElementById('result-container');
+            const resultCard = document.querySelector('.result-card');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            btnText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            predictBtn.disabled = true;
+            resultContainer.classList.remove('hidden');
+
+            const formData = new FormData(this);
+            const data = {
+                year: parseInt(formData.get('year')),
+                rating: parseFloat(formData.get('rating')),
+                genre: formData.get('genre'),
+                run_time: parseInt(formData.get('run_time')),
+                budget: parseInt(formData.get('budget'))
+            };
+
+            try {
+                // IMPORTANT: Replace with your actual backend URL if it's not running on the default Flask port
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Determine result styling
+                const isProfit = result.status === 'Profit';
+                const resultBg = isProfit ? 'bg-green-800' : 'bg-red-800';
+                const resultBorder = isProfit ? 'border-green-600' : 'border-red-600';
+                const statusTextColor = isProfit ? 'text-green-300' : 'text-red-300';
+                
+                // Populate the result card
+                resultDiv.className = `result-back absolute w-full h-full rounded-xl p-6 flex flex-col items-center justify-center shadow-xl ${resultBg} border ${resultBorder}`;
+                resultDiv.innerHTML = `
+                    <p class="text-gray-200 text-lg mb-2">Predicted Revenue</p>
+                    <h2 class="text-4xl font-bold text-white mb-4">$${result.predicted_revenue}</h2>
+                    <div class="w-full border-t border-gray-600 my-2"></div>
+                    <p class="text-2xl font-semibold ${statusTextColor} mt-2">${result.status}: $${result.profit_loss}</p>
                 `;
-                resultTextElement.style.color = 'black';
-            } else {
-                resultTextElement.textContent = 'An unknown error occurred.';
-                resultTextElement.style.color = 'red';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('predictionText').textContent = 'An error occurred during the prediction.';
-            document.getElementById('predictionText').style.color = 'red';
-        });
-    });
-</script>
+                
+                // Flip the card
+                resultCard.classList.add('flip');
 
+            } catch (error) {
+                console.error('Prediction error:', error);
+                resultCard.classList.remove('flip');
+                const resultFront = document.querySelector('.result-front');
+                resultFront.innerHTML = `<p class="text-red-400 text-lg">Error: ${error.message}</p>`;
+
+            } finally {
+                // Reset button state
+                btnText.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+                predictBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
