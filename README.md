@@ -77,7 +77,7 @@ Open this URL in your web browser to use the application.
 
 ## How It Works
 
-### 1. Model Training (`Copy_of_ml_mini_project.ipynb`)
+### 1. Model Training (`Model Training.ipynb`)
 
 The machine learning model is the "brain" of the application. It was built and trained using the provided Jupyter Notebook.
 
